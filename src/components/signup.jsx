@@ -95,7 +95,7 @@ const SignUp = () => {
     }
 
     try {
-      const response = await axios.post("http://34.22.80.43/users/", userDetails, {
+      const response = await axios.post("http://34.22.80.43:8000/users/", userDetails, {
         headers: {
           'Content-Type': 'application/json',
         },

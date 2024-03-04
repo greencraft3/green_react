@@ -56,7 +56,7 @@ const Practice = () => {
             };
 
           const response = await axios.get(
-            `http://34.22.80.43/api/image-with-text/?start_date=${formattedStartDate}&end_date=${formattedEndDate}&managercode=${managercode}`,
+            `http://34.22.80.43:8000/api/image-with-text/?start_date=${formattedStartDate}&end_date=${formattedEndDate}&managercode=${managercode}`,
             config
           );
           

@@ -21,7 +21,7 @@ const FAQ = () => {
         },
       };
 
-      const response = await axios.get('http://34.22.80.43/api/faq', config);
+      const response = await axios.get('http://34.22.80.43:8080/api/faq', config);
       setFaqData(response.data);
     } catch (error) {
       console.error('FAQ 데이터를 불러오는데 오류', error);

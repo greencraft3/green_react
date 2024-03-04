@@ -89,12 +89,13 @@ const MyPageB = () => {
   const navigate = useNavigate();
   const [fuelData, setFuelData] = useState(null);
   const [filteredData, setFilteredData] = useState(null); // 가솔린 manager_businesscode
+  const [highestIdFuel, setHighestIdFuel] = useState('');
   const [username, setUsername] = useState(localStorage.getItem('username') || null);
   const updatedUserData = {};
   const [editableData, setEditableData] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [managercode, setManagercode] = useState(null);
-  const [manmodel, setManmodel] = useState([]);
+  const [manmodels, setManmodels] = useState([]);
   const [formattedStartDate, setFormattedStartDate] = useState('');
   const [formattedEndDate, setFormattedEndDate] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -109,7 +110,7 @@ const MyPageB = () => {
         const _comcode = localStorage.getItem('comcode') === 'true';
   
         // Fetch user data
-        const userResponse = await axios.get(`http://34.22.80.43/users/${username}/`, {
+        const userResponse = await axios.get(`http://34.22.80.43:8000/users/${username}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -156,18 +157,23 @@ const MyPageB = () => {
         };
 
         // Fetch fuel data between formattedStartDate and formattedEndDate
-        const response = await axios.get(`http://34.22.80.43/api/image-with-text/?start_date=${formattedStartDate}&end_date=${formattedEndDate}`, config);
+        const response = await axios.get(
+          `http://34.22.80.43:8000/api/image-with-text/?start_date=${formattedStartDate}&end_date=${formattedEndDate}&order_by=-id`,
+         config);
   
         if (response.data) {
           const fuelDataArray = response.data;
   
+        const highestIdFuel  = fuelDataArray.reduce((prev, current) =>
+          prev.id > current.id ? prev : current
+        );
+
           // Filter fuel data based on managercode
-          const setFirstfuel = fuelDataArray.filter(data => data.managercode === managercode);
+          const setHighestIdFuel = fuelDataArray.filter(data => data.managercode === managercode);
   
-          if (setFirstfuel.length > 0) {
-            const firstfuel = setFirstfuel[setFirstfuel.length - 1];
-            setFuelData(firstfuel);
-            console.log('차량주유금액 최신 데이터', firstfuel);
+          if (setHighestIdFuel.length > 0) {
+            setFuelData(highestIdFuel);
+            console.log('차량주유금액 최신 데이터', highestIdFuel);
           } else {
             console.warn('일치하는 FUEL_DATA가 없습니다.');
           }
@@ -196,7 +202,7 @@ const MyPageB = () => {
         const managercode = localStorage.getItem('managercode');
   
         // Fetch business codes data
-        const businessCodesResponse = await axios.get(`http://34.22.80.43/businesscodes/`, {
+        const businessCodesResponse = await axios.get(`http://34.22.80.43:8000/businesscodes/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -242,40 +248,46 @@ const MyPageB = () => {
 
   //탄소세금계산
   const handleSearch = async () => {
+    console.log('handleSearch 함수가 호출되었습니다.');
     const token = localStorage.getItem('accessToken');
     const managercode = localStorage.getItem('managercode');
+    const userId = localStorage.getItem('userId'
+    );
+    console.log('값:', username, userId);
     
     try {
-      if (token && managercode && username) {
+      if (token && managercode && userId) {
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         };
-        
+  
         const searchData = {
           managercode: managercode,
           start_date: startDate,
           end_date: endDate,
-          username: username,
+          username: userId,
         };
         
   
-        // POST 요청을 통해 새로운 데이터 생성
-        const postResponse = await axios.post('http://34.22.80.43/manmodels/', searchData, config);
+        // POST request to create new data
+        const postResponse = await axios.post('http://34.22.80.43:8000/manmodels/', searchData, config);
   
-        // GET 요청을 통해 최신 데이터 가져오기
-        const getResponse = await axios.get(`http://34.22.80.43/manmodels/${postResponse.data.id}/`, config);
-        
-        // 최신 데이터를 상태에 업데이트
-        setManmodel([getResponse.data]);
-  
+        // Check if the POST request was successful
+        if (postResponse.status === 201) {
+          // Update the state with the created data
+          setManmodels([postResponse.data]);
+        } else {
+          console.error('Failed to create data.');
+        }
       }
     } catch (error) {
-      alert("날짜를 선택해주세요");
-      console.error('데이터를 불러오는 중 오류:', error);
+      alert("Please select a date");
+      console.error('Error while fetching data:', error);
     }
   };
+  
   
   
 
@@ -366,7 +378,7 @@ const MyPageB = () => {
   
       // 사용자 정보를 업데이트하기 위한 PUT 요청을 보냅니다.
       const response = await axios.put(
-        `http://34.22.80.43/users/${username}/`,
+        `http://34.22.80.43:8000/users/${username}/`,
         requestData,
         {
           headers: {
@@ -401,7 +413,7 @@ const MyPageB = () => {
           return;
         }
 
-        const response = await axios.delete(`http://34.22.80.43/users/${username}/`, {
+        const response = await axios.delete(`http://34.22.80.43:8000/users/${username}/`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
           },
@@ -583,7 +595,7 @@ const MyPageB = () => {
                     <h1 className="ms-5 text-light">탄소 세금 계산</h1>
                   </div>
                   <div>
-                  <div key={manmodel.id} style={{ margin: '0', paddingTop: '10px' }}>
+                  <div key={manmodels.id} style={{ margin: '0', paddingTop: '10px' }}>
                     <div className="d-flex">
                       <div className="me-3">
                         <label htmlFor="startDatePicker">시작 날짜:</label>
@@ -618,15 +630,15 @@ const MyPageB = () => {
                     </div>
                     
                     <div className="h4">
-                      {manmodel.length > 0 && (
-                        <div key={manmodel.id} style={{ margin: '0', paddingTop: '10px' }}>
+                      {manmodels.length > 0 && (
+                        <div key={manmodels.id} style={{ margin: '0', paddingTop: '10px' }}>
                           <div style={{ width: '100%' }}>
-                            <DataItem label="총 기름 L" amount={(parseFloat(manmodel[0].total_gas) || 0).toFixed(2)} />
-                            <DataItem label="총 탄소세" amount={(parseFloat(manmodel[0].total_carbon) || 0).toFixed(2)} />
+                            <DataItem label="총 기름 L" amount={(parseFloat(manmodels[0].total_gas) || 0).toFixed(2)} />
+                            <DataItem label="총 탄소세" amount={(parseFloat(manmodels[0].total_carbon) || 0).toFixed(2)} />
                           </div>
                         </div>
                       )}
-                      {manmodel.length === 0 && (
+                      {manmodels.length === 0 && (
                         <div key="noData" style={{ margin: '0', paddingTop: '10px' }}>
                           <div style={{ width: '100%' }}>
                             <DataItem label="총 기름 L" amount="0.00" />

@@ -37,11 +37,11 @@ const Login = () => {
     e.preventDefault();
     try {
       // 서버에 로그인 요청 보내기
-      const response = await axios.post("http://localhost:8000/login/", credentials);
+      const response = await axios.post("http://34.22.80.43:8000/login/", credentials);
       
       if (response.status === 200) {
         
-        const { access: accessToken, refresh: refreshToken, comcode, managercode, is_superuser} = response.data;
+        const { access: accessToken, refresh: refreshToken, comcode, managercode, is_superuser, userId} = response.data;
         
         
         localStorage.setItem('isLoggedIn', 'true');
@@ -51,6 +51,8 @@ const Login = () => {
         localStorage.setItem('comcode', comcode);
         localStorage.setItem('managercode', managercode);
         localStorage.setItem('is_superuser', is_superuser);
+        localStorage.setItem('userId', userId);
+
         console.log(response.data);
         console.log('Logged in as:', credentials.username); 
 

@@ -196,7 +196,7 @@ const Navigation = () => {
             {isLoggedIn && is_superuser ? (
               // 관리자 (is_superuser가 true인 경우)
               <li>
-                <a href="http://34.22.80.43/admin/" className="page-scroll" onClick={closeNav}>
+                <a href="http://34.22.80.43:8000/admin/" className="page-scroll" onClick={closeNav}>
                   <p className="noto-sans kr-<uniquifier> h2">Admin Page</p>
                 </a>
               </li>

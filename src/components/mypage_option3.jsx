@@ -19,7 +19,7 @@ const Mypage_option3 = () => {
           },
         };
 
-        const response = await axios.get(`http://34.22.80.43/api/process-image2/`, config);
+        const response = await axios.get(`http://34.22.80.43:8000/api/process-image2/`, config);
 
         console.log('서버 응답 (process-image2):', response.data);
 

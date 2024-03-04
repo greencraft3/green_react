@@ -67,7 +67,7 @@ const Services = (props) => {
         }
     
         // 서버에 이미지 업로드를 위한 POST 요청
-        const response = await axios.post(`http://34.22.80.43/api/process-image/`, {
+        const response = await axios.post(`http://34.22.80.43:8000/api/process-image/`, {
           image: base64Image,
         }, {
           headers: {

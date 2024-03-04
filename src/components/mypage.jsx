@@ -42,7 +42,7 @@ const MyPage = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('accessToken');
-        const response = await axios.get(`http://34.22.80.43/users/${username}/`, {
+        const response = await axios.get(`http://34.22.80.43:8000/users/${username}/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -90,7 +90,7 @@ const MyPage = () => {
         },
       };
 
-      const response = await axios.get(`http://34.22.80.43/api/process-image2/`, config);
+      const response = await axios.get(`http://34.22.80.43:8000/api/process-image2/`, config);
 
       console.log('서버 응답 (process-image2):', response.data);
 
@@ -138,7 +138,7 @@ const MyPage = () => {
   
       // 사용자 정보를 업데이트하기 위한 PUT 요청을 보냅니다.
       const response = await axios.put(
-        `http://34.22.80.43/users/${username}/`,
+        `http://34.22.80.43:8000/users/${username}/`,
         requestData,
         {
           headers: {
@@ -174,7 +174,7 @@ const MyPage = () => {
         };
   
         // Fetch fuel data between formattedStartDate and formattedEndDate
-        const response = await axios.get(`http://34.22.80.43/api/image-with-text/`, config);
+        const response = await axios.get(`http://34.22.80.43:8000/api/image-with-text/`, config);
   
         if (response.data) {
           const fuelDataArray = response.data;
@@ -250,7 +250,7 @@ const MyPage = () => {
           return;
         }
 
-        const response = await axios.delete(`http://34.22.80.43/users/${username}/`, {
+        const response = await axios.delete(`http://34.22.80.43:8000/users/${username}/`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
           },
@@ -309,7 +309,7 @@ const MyPage = () => {
             {/* 사이드바 */}
             <ul className="nav navbar-nav ml-auto" style={{ listStyle: 'none', padding: 0 }}>
               <h1 className="m-5">마이페이지</h1>
-              {['option1', 'option2', 'option3'].map((section) => (
+              {['option2', 'option3'].map((section) => (
                 <li key={section}>
                   <div
                     onClick={() => handleSectionClick(section)}
@@ -320,7 +320,8 @@ const MyPage = () => {
                     }}
                   >
                     {/* 사이드바 메뉴 배열 */}
-                    <h4>{section === 'option1' ? '내 차량 정보' : section === 'option2' ? '회원 정보' : section === 'option3' ? '기록': ''}</h4>
+                    {/* <h4>{section === 'option1' ? '설정' : section === 'option2' ? '회원 정보' : section === 'option3' ? '기록': ''}</h4> */}
+                    <h4>{section === 'option2' ? '회원 정보' : section === 'option3' ? '기록': ''}</h4>
                   </div>
                 </li>
               ))}
@@ -363,7 +364,7 @@ const MyPage = () => {
 
         {/* 내 차량 정보 */}
         <div className="col-md-8 row-md-10">
-          {selectedSection === 'option1' && (
+          {/* {selectedSection === 'option1' && (
             <div id="option1" style={{ height: '50%', background: '#ffffff' }}>
               <div className="col-md-3">
                 <div style={{
@@ -379,6 +380,7 @@ const MyPage = () => {
                   width: '400px',
                   marginTop: '20px',
                 }}>
+
                   {uploadedImage && (
                     <div style={{ position: 'relative', textAlign: 'center' }}>
                       <img
@@ -394,7 +396,6 @@ const MyPage = () => {
                     </div>
                   )}
 
-                  {/* 이미지 업로드 */}
                   {!uploadedImage && (
                     <>
                       <input
@@ -418,7 +419,6 @@ const MyPage = () => {
                 </div>
               </div>
 
-              {/* 등급, 차종 등등 */}
               <div className="col-sm-6">
                 <div className="h4" style={{ position: 'relative', top: '20px', left: '48%', width: '100%' }}>
                 {fuelData  && (
@@ -434,7 +434,7 @@ const MyPage = () => {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
                 {/* {cardata.map((data, index) => (
                     <div key={index} className="col-sm-12 border-bottom p-3 mx-5 mt-3" style={{ padding: '15px', fontSize: '15px' }}>
@@ -485,10 +485,6 @@ const MyPage = () => {
                 </h1>
               </div>
             )}
-
-
-
-
 
             {selectedSection === 'option3' && (
               <Mypage_option3 />
