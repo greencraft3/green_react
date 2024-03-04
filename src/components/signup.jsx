@@ -89,7 +89,7 @@ const SignUp = () => {
 
     const isValidManagerCode = userDetails.managercode.length === 10;
 
-    if (!isValidManagerCode) {
+    if (userDetails.membershipType === 'premium' && !isValidManagerCode) {
       alert('사업자 번호는 10자리여야 합니다.');
       return;
     }
